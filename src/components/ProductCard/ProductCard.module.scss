@@ -1,0 +1,143 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  background-color: #161827;
+  border: 1px solid #323542;
+  border-radius: 16px;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &__imageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  &__image {
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+
+    .card__image {
+      transform: scale(1.1);
+    }
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 8px;
+    line-height: 21px;
+
+    &:hover {
+      color: #905bfe;
+    }
+  }
+
+  &__prices {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  &__price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+
+    &--full {
+      font-size: 22px;
+      font-weight: 500;
+      color: #8993a4;
+      text-decoration: line-through;
+    }
+  }
+
+  &__specs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid #323542;
+    margin-bottom: 16px;
+  }
+
+  &__specRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  &__specName {
+    color: #8993a4;
+  }
+
+  &__specValue {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  &__addButton {
+    flex-grow: 1;
+    height: 40px;
+    background-color: #905bfe;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #a372fe;
+    }
+
+    &--added {
+      background-color: #323542;
+      color: #fff;
+
+      &:hover {
+        background-color: #323542;
+      }
+    }
+  }
+
+  &__favButton {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #323542;
+    border: 1px solid #323542;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    transition: border-color 0.3s;
+
+    &:hover {
+      border-color: #8993a4;
+    }
+
+    &--active {
+      color: #eb5757;
+    }
+  }
+}

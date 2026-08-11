@@ -1,0 +1,29 @@
+.favoritesPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 80px;
+
+  &__title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  &__count {
+    font-size: 14px;
+    color: #8993a4;
+    margin-bottom: 32px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  &__empty {
+    font-size: 18px;
+    color: #8993a4;
+  }
+}
