@@ -1,61 +1,86 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { CartItem } from '../types/CartItem';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types/Product';
+import { CartItem } from '../types/CartItem';
 
 interface CartContextType {
   cart: CartItem[];
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
-  changeQuantity: (productId: number, quantity: number) => void;
-  clearCart: () => void;
-  isInCart: (productId: number) => boolean;
+  removeFromCart: (productId: string | number) => void;
+  increaseQuantity: (productId: string | number) => void;
+  decreaseQuantity: (productId: string | number) => void;
+  isInCart: (productId: string | number) => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
-
-const LOCAL_STORAGE_KEY = 'cart';
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const savedCart = localStorage.getItem('cart');
 
-    return saved ? JSON.parse(saved) : [];
+    return savedCart ? JSON.parse(savedCart) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cart));
+    localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
   const addToCart = (product: Product) => {
-    setCart(prev => {
-      if (prev.some(item => item.id === product.id)) {
-        return prev;
+    setCart(prevCart => {
+      const existingItem = prevCart.find(
+        item => String(item.product.id) === String(product.id),
+      );
+
+      if (existingItem) {
+        return prevCart.map(item =>
+          String(item.product.id) === String(product.id)
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
       }
 
-      return [...prev, { id: product.id, product, quantity: 1 }];
+      return [
+        ...prevCart,
+        {
+          id: product.id,
+          product,
+          quantity: 1,
+        },
+      ];
     });
   };
 
-  const removeFromCart = (productId: number) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
-
-  const changeQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      return;
-    }
-
-    setCart(prev =>
-      prev.map(item => (item.id === productId ? { ...item, quantity } : item)),
+  const removeFromCart = (productId: string | number) => {
+    setCart(prevCart =>
+      prevCart.filter(item => String(item.product.id) !== String(productId)),
     );
   };
 
-  const clearCart = () => setCart([]);
+  const increaseQuantity = (productId: string | number) => {
+    setCart(prevCart =>
+      prevCart.map(item =>
+        String(item.product.id) === String(productId)
+          ? { ...item, quantity: item.quantity + 1 }
+          : item,
+      ),
+    );
+  };
 
-  const isInCart = (productId: number) => {
-    return cart.some(item => item.id === productId);
+  const decreaseQuantity = (productId: string | number) => {
+    setCart(prevCart =>
+      prevCart
+        .map(item =>
+          String(item.product.id) === String(productId)
+            ? { ...item, quantity: item.quantity - 1 }
+            : item,
+        )
+        .filter(item => item.quantity > 0),
+    );
+  };
+
+  const isInCart = (productId: string | number) => {
+    return cart.some(item => String(item.product.id) === String(productId));
   };
 
   return (
@@ -64,8 +89,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         cart,
         addToCart,
         removeFromCart,
-        changeQuantity,
-        clearCart,
+        increaseQuantity,
+        decreaseQuantity,
         isInCart,
       }}
     >

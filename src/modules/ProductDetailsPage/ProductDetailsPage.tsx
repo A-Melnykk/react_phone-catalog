@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getProductDetails, getProducts } from '../../api/products';
 import { ProductDetails } from '../../types/ProductDetails';
 import { Product } from '../../types/Product';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { ProductsSlider } from '../../components/ProductsSlider';
+import { Loader } from '../../components/Loader';
 import styles from './ProductDetailsPage.module.scss';
 
 export const ProductDetailsPage: React.FC = () => {
@@ -28,38 +28,54 @@ export const ProductDetailsPage: React.FC = () => {
 
     setIsLoading(true);
 
-    Promise.all([getProductDetails(productId), getProducts()])
-      .then(([detailsData, allProducts]) => {
-        if (!detailsData) {
+    fetch('./api/products.json')
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+
+        return res.json();
+      })
+      .then((allProducts: ProductDetails[]) => {
+        const foundDetails = allProducts.find(
+          p =>
+            p.id === productId ||
+            (p as unknown as Product).itemId === productId,
+        );
+
+        if (!foundDetails) {
           navigate('/not-found', { replace: true });
 
           return;
         }
 
-        setDetails(detailsData);
-        setSelectedImage(detailsData.images[0]);
+        setDetails(foundDetails);
+        setSelectedImage(foundDetails.images[0]);
 
-        const currentProduct = allProducts.find(
-          p => p.itemId === detailsData.id,
+        const currentProduct = (allProducts as unknown as Product[]).find(
+          p => p.itemId === foundDetails.id || String(p.id) === foundDetails.id,
         );
 
         if (currentProduct) {
           setProduct(currentProduct);
 
-          const suggested = allProducts.filter(
+          const suggested = (allProducts as unknown as Product[]).filter(
             p =>
               p.category === currentProduct.category &&
-              p.itemId !== detailsData.id,
+              p.id !== currentProduct.id,
           );
 
           setSuggestedProducts(suggested);
         }
       })
+      .catch(() => {
+        navigate('/not-found', { replace: true });
+      })
       .finally(() => setIsLoading(false));
   }, [productId, navigate]);
 
   if (isLoading) {
-    return <div className={styles.detailsPage}>Loading...</div>;
+    return <Loader />;
   }
 
   if (!details || !product) {
@@ -81,7 +97,7 @@ export const ProductDetailsPage: React.FC = () => {
   return (
     <div className={styles.detailsPage}>
       <Link to=".." relative="path" className={styles.detailsPage__back}>
-        ‹ Back
+        &lt; Back
       </Link>
 
       <h1 className={styles.detailsPage__title}>{details.name}</h1>

@@ -17,9 +17,9 @@ export const HomePage: React.FC = () => {
   }, []);
 
   const hotPricesProducts = useMemo(() => {
-    return [...products].sort(
-      (a, b) => b.fullPrice - b.price - (a.fullPrice - a.price),
-    );
+    return products
+      .filter(product => product.fullPrice > product.price)
+      .sort((a, b) => b.fullPrice - b.price - (a.fullPrice - a.price));
   }, [products]);
 
   const brandNewProducts = useMemo(() => {
