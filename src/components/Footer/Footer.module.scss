@@ -1,5 +1,5 @@
 .footer {
-  background-color: #0f1121;
+  background-color: #fff;
   border-top: 1px solid #e2e6e9;
   padding: 32px 0;
 
@@ -13,10 +13,8 @@
   }
 
   &__logo {
-    font-weight: 800;
-    font-size: 18px;
-    color: #fff;
-    text-decoration: none;
+    display: flex;
+    align-items: center;
   }
 
   &__nav {
@@ -33,24 +31,7 @@
     transition: color 0.3s;
 
     &:hover {
-      color: #fff;
-    }
-  }
-
-  &__backToTop {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: transparent;
-    border: none;
-    color: #8993a4;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: color 0.3s;
-
-    &:hover {
-      color: #fff;
+      color: #313237;
     }
   }
 
@@ -60,8 +41,29 @@
     justify-content: center;
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    border: 1px solid #323542;
-    background-color: #323542;
+    border: 1px solid #b4bdc3;
+    background-color: #fff;
+    transition: border-color 0.3s;
+  }
+
+  &__backToTop {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: transparent;
+    border: none;
+    color: #8993a4;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #313237;
+
+      .footer__arrow {
+        border-color: #313237;
+      }
+    }
   }
 }

@@ -1,53 +1,51 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import styles from './Header.module.scss';
-import { useCart } from '../../context/CartContext';
-import { useFavorites } from '../../context/FavoritesContext';
 
 export const Header: React.FC = () => {
-  const { cart } = useCart();
-  const { favorites } = useFavorites();
-
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalFavoritesCount = favorites.length;
-
   const getLinkClass = ({ isActive }: { isActive: boolean }) =>
     `${styles.header__link} ${isActive ? styles['header__link--active'] : ''}`;
 
   return (
     <header className={styles.header}>
-      <NavLink to="/" className={styles.header__logo}>
-        LOGO
-      </NavLink>
+      <div className={styles.header__left}>
+        <Link to="/" className={styles.header__logo}>
+          <img src="./public/img/logo.svg.svg" alt="Nice Gadgets Logo" />
+        </Link>
 
-      <nav className={styles.header__nav}>
-        <NavLink to="/" className={getLinkClass}>
-          Home
-        </NavLink>
-        <NavLink to="/phones" className={getLinkClass}>
-          Phones
-        </NavLink>
-        <NavLink to="/tablets" className={getLinkClass}>
-          Tablets
-        </NavLink>
-        <NavLink to="/accessories" className={getLinkClass}>
-          Accessories
-        </NavLink>
-      </nav>
+        <nav className={styles.header__nav}>
+          <NavLink to="/" className={getLinkClass}>
+            Home
+          </NavLink>
+          <NavLink to="/phones" className={getLinkClass}>
+            Phones
+          </NavLink>
+          <NavLink to="/tablets" className={getLinkClass}>
+            Tablets
+          </NavLink>
+          <NavLink to="/accessories" className={getLinkClass}>
+            Accessories
+          </NavLink>
+        </nav>
+      </div>
 
       <div className={styles.header__actions}>
-        <NavLink to="/favorites" className={styles.header__iconLink}>
-          ❤️
-          {totalFavoritesCount > 0 && (
-            <span className={styles.header__badge}>{totalFavoritesCount}</span>
-          )}
+        <NavLink
+          to="/favorites"
+          className={({ isActive }) =>
+            `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
+          }
+        >
+          <img src="./public/img/favourites.svg.svg" alt="Favorites" />
         </NavLink>
 
-        <NavLink to="/cart" className={styles.header__iconLink}>
-          🛒
-          {totalCartCount > 0 && (
-            <span className={styles.header__badge}>{totalCartCount}</span>
-          )}
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
+          }
+        >
+          <img src="./public/img/cart.svg.svg" alt="Cart" />
         </NavLink>
       </div>
     </header>

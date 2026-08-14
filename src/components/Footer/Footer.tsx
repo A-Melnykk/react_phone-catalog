@@ -1,30 +1,23 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './Footer.module.scss';
 
 export const Footer: React.FC = () => {
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
   return (
     <footer className={styles.footer}>
       <div className={styles.footer__content}>
-        <NavLink to="/" className={styles.footer__logo}>
-          LOGO
-        </NavLink>
+        <Link to="/" className={styles.footer__logo}>
+          <img src="./public/img/logo.svg.svg" alt="Nice Gadgets Logo" />
+        </Link>
 
-        <nav className={styles.footer__nav}>
+        <div className={styles.footer__nav}>
           <a
             href="https://github.com"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noreferrer"
             className={styles.footer__link}
           >
-            Github
+            GitHub
           </a>
           <a href="#/contacts" className={styles.footer__link}>
             Contacts
@@ -32,15 +25,14 @@ export const Footer: React.FC = () => {
           <a href="#/rights" className={styles.footer__link}>
             Rights
           </a>
-        </nav>
+        </div>
 
         <button
           type="button"
           className={styles.footer__backToTop}
-          onClick={scrollToTop}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           Back to top
-          <span className={styles.footer__arrow}>↑</span>
         </button>
       </div>
     </footer>
