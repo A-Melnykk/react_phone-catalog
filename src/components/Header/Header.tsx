@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
     <header className={styles.header}>
       <div className={styles.header__left}>
         <Link to="/" className={styles.header__logo}>
-          <img src="/img/logo.svg" alt="Nice Gadgets Logo" />
+          <img src="./img/logo.svg" alt="Nice Gadgets Logo" />
         </Link>
 
         <nav className={styles.header__nav}>
@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
             `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
           }
         >
-          <img src="/img/favourites.svg" alt="Favorites" />
+          <img src="./img/favourites.svg" alt="Favorites" />
         </NavLink>
 
         <NavLink
@@ -45,7 +45,7 @@ export const Header: React.FC = () => {
             `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
           }
         >
-          <img src="/img/cart.svg" alt="Cart" />
+          <img src="./img/cart.svg" alt="Cart" />
         </NavLink>
       </div>
     </header>
