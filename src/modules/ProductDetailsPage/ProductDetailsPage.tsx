@@ -8,7 +8,22 @@ import { NotFoundPage } from '../NotFoundPage';
 import { ProductsSlider } from '../../components/ProductsSlider';
 import styles from './ProductDetailsPage.module.scss';
 
-const BASE_URL = import.meta.env.BASE_URL || '/';
+const rawBase = import.meta.env.BASE_URL || '/';
+const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+const getFullImgPath = (path: string) => {
+  if (!path) {
+    return '';
+  }
+
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+
+  return `${normalizedBase}${cleanPath}`;
+};
 
 export const ProductDetailsPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -50,10 +65,6 @@ export const ProductDetailsPage: React.FC = () => {
   if (isError || !details) {
     return <NotFoundPage />;
   }
-
-  const getFullImgPath = (path: string) => {
-    return path.startsWith('http') ? path : `${BASE_URL}${path}`;
-  };
 
   return (
     <div className={styles.container}>
