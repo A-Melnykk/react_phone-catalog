@@ -6,6 +6,7 @@
   border: 1px solid #323542;
   border-radius: 16px;
   transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
 
   &__imageContainer {
     display: flex;
@@ -13,13 +14,14 @@
     justify-content: center;
     height: 200px;
     margin-bottom: 24px;
-    overflow: hidden;
+    overflow: visible;
   }
 
   &__image {
     max-height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
+    position: relative;
   }
 
   &:hover {
@@ -27,6 +29,7 @@
 
     .card__image {
       transform: scale(1.1);
+      z-index: 10;
     }
   }
 
