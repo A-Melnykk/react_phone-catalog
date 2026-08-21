@@ -1,10 +1,11 @@
 import { Product } from '../types/Product';
 import { ProductDetails } from '../types/ProductDetails';
 
-const BASE_URL = `${import.meta.env.BASE_URL || '/'}api`;
+const rawBase = import.meta.env.BASE_URL || '/';
+const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 function request<T>(url: string): Promise<T> {
-  return fetch(`${BASE_URL}${url}`).then(response => {
+  return fetch(`${normalizedBase}${url}`).then(response => {
     if (!response.ok) {
       throw new Error(`Failed to fetch data: ${response.status}`);
     }
@@ -13,15 +14,15 @@ function request<T>(url: string): Promise<T> {
   });
 }
 
-export const getProducts = () => request<Product[]>('/products.json');
+export const getProducts = () => request<Product[]>('api/products.json');
 
 export const getProductDetails = (
   productId: string,
 ): Promise<ProductDetails | null> => {
   return Promise.all([
-    request<ProductDetails[]>('/phones.json').catch(() => []),
-    request<ProductDetails[]>('/tablets.json').catch(() => []),
-    request<ProductDetails[]>('/accessories.json').catch(() => []),
+    request<ProductDetails[]>('api/phones.json').catch(() => []),
+    request<ProductDetails[]>('api/tablets.json').catch(() => []),
+    request<ProductDetails[]>('api/accessories.json').catch(() => []),
   ]).then(([phones, tablets, accessories]) => {
     const allDetails = [...phones, ...tablets, ...accessories];
 
