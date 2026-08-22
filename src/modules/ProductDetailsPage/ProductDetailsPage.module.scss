@@ -1,79 +1,94 @@
-.container {
-  max-width: 1136px;
+.productDetails {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 16px;
-  color: #f1f2f9;
+  padding: 24px 16px 64px;
 }
 
 .breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
-  color: #8993a4;
-  margin-bottom: 16px;
+  color: #75767f;
+  margin-bottom: 40px;
 
-  a {
+  .link {
     color: #f1f2f9;
     text-decoration: none;
-  }
-}
+    transition: color 0.3s;
 
-.backBtn {
-  background: none;
-  border: none;
-  color: #8993a4;
-  cursor: pointer;
-  font-size: 12px;
-  margin-bottom: 16px;
-  padding: 0;
+    &:hover {
+      color: #905bfc;
+    }
+  }
 }
 
 .title {
   font-size: 32px;
   font-weight: 800;
-  margin-bottom: 32px;
+  color: #f1f2f9;
+  margin-bottom: 40px;
 }
 
 .mainContent {
   display: flex;
   gap: 64px;
-  margin-bottom: 80px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 32px;
+  }
 }
 
 .gallery {
   display: flex;
   gap: 16px;
   flex: 1;
+  max-width: 580px;
+
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+  }
 }
 
 .thumbnails {
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  @media (max-width: 640px) {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 
 .thumbBtn {
   width: 80px;
   height: 80px;
   border: 1px solid #323542;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
   padding: 8px;
-  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s;
 
   img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
   }
 
-  &--active {
+  &.active {
     border-color: #f1f2f9;
   }
 }
 
-.mainImageContainer {
+.mainImage {
   flex: 1;
-  max-width: 460px;
-  height: 460px;
+  height: 464px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,22 +107,17 @@
   gap: 24px;
 }
 
-.optionSection {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border-bottom: 1px solid #323542;
-  padding-bottom: 24px;
-}
-
-.optionLabel {
+.label {
   font-size: 12px;
-  color: #8993a4;
+  color: #75767f;
+  margin-bottom: 8px;
 }
 
-.colors {
+.colorsList {
   display: flex;
   gap: 8px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #323542;
 }
 
 .colorCircle {
@@ -115,27 +125,39 @@
   height: 32px;
   border-radius: 50%;
   border: 2px solid transparent;
+  outline: 1px solid #323542;
+  cursor: pointer;
+  transition: transform 0.2s, outline-color 0.2s;
 
-  &--active {
-    outline: 1px solid #f1f2f9;
+  &.selectedColor {
+    outline-color: #f1f2f9;
+  }
+
+  &:hover {
+    transform: scale(1.05);
   }
 }
 
-.capacities {
+.capacityList {
   display: flex;
   gap: 8px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #323542;
 }
 
 .capacityBtn {
   padding: 8px 12px;
   border: 1px solid #323542;
+  border-radius: 4px;
   color: #f1f2f9;
   text-decoration: none;
   font-size: 14px;
+  transition: background-color 0.3s, border-color 0.3s;
 
-  &--active {
-    background: #f1f2f9;
+  &.selectedCapacity {
+    background-color: #f1f2f9;
     color: #0f1121;
+    border-color: #f1f2f9;
   }
 }
 
@@ -143,103 +165,147 @@
   display: flex;
   align-items: center;
   gap: 8px;
+
+  .priceDiscount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #f1f2f9;
+  }
+
+  .priceRegular {
+    font-size: 22px;
+    color: #75767f;
+    text-decoration: line-through;
+  }
 }
 
-.priceDiscount {
-  font-size: 32px;
-  font-weight: 800;
-}
-
-.priceRegular {
-  font-size: 22px;
-  color: #8993a4;
-  text-decoration: line-through;
-}
-
-.buttons {
+.buttonsRow {
   display: flex;
   gap: 8px;
 }
 
-.addToCartBtn {
+.addBtn {
   flex: 1;
   height: 48px;
-  background-color: #905bfe;
+  background-color: #905bfc;
   color: #fff;
   border: none;
+  border-radius: 4px;
   font-weight: 700;
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #a378fc;
+  }
+
+  &.inCart {
+    background-color: #323542;
+    color: #27ae60;
+  }
 }
 
 .favBtn {
   width: 48px;
   height: 48px;
-  background: #323542;
-  border: none;
-  color: #fff;
+  border: 1px solid #323542;
+  border-radius: 4px;
+  background: transparent;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: #f1f2f9;
+  }
 }
 
-.quickSpecs,
-.techSpecs {
+.shortSpecs,
+.fullSpecs {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.shortSpecs {
+  padding-top: 8px;
+}
+
 .specRow {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-
-  span:first-child {
-    color: #8993a4;
-  }
+  font-size: 14px;
 }
 
-.detailsGrid {
+.specName {
+  color: #75767f;
+}
+
+.specValue {
+  color: #f1f2f9;
+  text-align: right;
+}
+
+.bottomContent {
   display: flex;
   gap: 64px;
-  margin-bottom: 80px;
+  margin-top: 80px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 40px;
+  }
 }
 
-.about {
+.aboutSection {
   flex: 1;
+}
 
-  h2 {
-    font-size: 24px;
-    border-bottom: 1px solid #323542;
-    padding-bottom: 16px;
-    margin-bottom: 32px;
+.techSpecsSection {
+  width: 500px;
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 }
 
-.paragraph {
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f1f2f9;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #323542;
   margin-bottom: 32px;
-
-  h3 {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  p {
-    color: #8993a4;
-    line-height: 1.5;
-    font-size: 14px;
-  }
 }
 
-.techSpecs {
-  width: 512px;
-
-  h2 {
-    font-size: 24px;
-    border-bottom: 1px solid #323542;
-    padding-bottom: 16px;
-    margin-bottom: 32px;
-  }
+.descriptionBlock {
+  margin-bottom: 32px;
 }
 
-.sliderSection {
+.descTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f1f2f9;
+  margin-bottom: 16px;
+}
+
+.descText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #75767f;
+}
+
+.notFound {
+  text-align: center;
+  color: #f1f2f9;
+  font-size: 24px;
+  margin-top: 64px;
+}
+
+.youMayLike {
   margin-top: 80px;
 }

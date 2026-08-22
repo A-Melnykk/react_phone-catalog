@@ -1,38 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import classNames from 'classnames';
+import { getProductDetails, getProducts } from '../../api/products';
 import { ProductDetails } from '../../types/ProductDetails';
 import { Product } from '../../types/Product';
-import { getProductDetails, getProducts } from '../../api/products';
 import { Loader } from '../../components/Loader';
-import { NotFoundPage } from '../NotFoundPage';
 import { ProductsSlider } from '../../components/ProductsSlider';
+import { getBgColor } from '../../utils/colors';
+import { useCart } from '../../context/CartContext';
+import { useFavorites } from '../../context/FavoritesContext';
 import styles from './ProductDetailsPage.module.scss';
-
-const rawBase = import.meta.env.BASE_URL || '/';
-const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
-
-const getFullImgPath = (path: string) => {
-  if (!path) {
-    return '';
-  }
-
-  if (path.startsWith('http')) {
-    return path;
-  }
-
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-
-  return `${normalizedBase}${cleanPath}`;
-};
 
 export const ProductDetailsPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
-  const navigate = useNavigate();
-  const [details, setDetails] = useState<ProductDetails | null>(null);
+  const [product, setProduct] = useState<ProductDetails | null>(null);
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
-  const [selectedImage, setSelectedImage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const { addToCart, isInCart } = useCart();
+  const { toggleFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
     if (!productId) {
@@ -40,21 +27,18 @@ export const ProductDetailsPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    setIsError(false);
 
     Promise.all([getProductDetails(productId), getProducts()])
-      .then(([fetchedDetails, allProducts]) => {
-        if (!fetchedDetails) {
-          setIsError(true);
-
-          return;
+      .then(([details, allProducts]) => {
+        setProduct(details);
+        if (details && details.images && details.images.length > 0) {
+          setSelectedImage(details.images[0]);
         }
 
-        setDetails(fetchedDetails);
-        setSelectedImage(fetchedDetails.images[0] || '');
-        setSuggestedProducts(allProducts);
+        const randomProducts = [...allProducts].sort(() => Math.random() - 0.5);
+
+        setSuggestedProducts(randomProducts);
       })
-      .catch(() => setIsError(true))
       .finally(() => setIsLoading(false));
   }, [productId]);
 
@@ -62,180 +46,240 @@ export const ProductDetailsPage: React.FC = () => {
     return <Loader />;
   }
 
-  if (isError || !details) {
-    return <NotFoundPage />;
+  if (!product) {
+    return <p className={styles.notFound}>Product not found</p>;
   }
 
+  const category = 'phones';
+  const isAdded = isInCart(Number(product.id));
+  const favorite = isFavorite(Number(product.id));
+
+  const cartProduct: Product = {
+    id: Number(product.id),
+    category,
+    itemId: product.id,
+    name: product.name,
+    fullPrice: product.priceRegular,
+    price: product.priceDiscount,
+    screen: product.screen,
+    capacity: product.capacity,
+    color: product.color,
+    ram: product.ram,
+    year: 2022,
+    image: product.images[0],
+  };
+
   return (
-    <div className={styles.container}>
+    <div className={styles.productDetails}>
       <div className={styles.breadcrumbs}>
-        <Link to="/">Home</Link> &gt; <Link to="/phones">Phones</Link> &gt;{' '}
-        <span>{details.name}</span>
+        <Link to="/" className={styles.link}>
+          Home
+        </Link>
+        <span> &gt; </span>
+        <Link to={`/${category}`} className={styles.link}>
+          {category}
+        </Link>
+        <span> &gt; </span>
+        <span>{product.name}</span>
       </div>
 
-      <button
-        type="button"
-        className={styles.backBtn}
-        onClick={() => navigate(-1)}
-      >
-        &lt; Back
-      </button>
-
-      <h1 className={styles.title}>{details.name}</h1>
+      <h1 className={styles.title}>{product.name}</h1>
 
       <div className={styles.mainContent}>
         <div className={styles.gallery}>
           <div className={styles.thumbnails}>
-            {details.images.map((img, index) => (
+            {product.images.map(img => (
               <button
-                key={index}
+                key={img}
                 type="button"
-                className={`${styles.thumbBtn} ${
-                  selectedImage === img ? styles['thumbBtn--active'] : ''
-                }`}
+                className={classNames(styles.thumbBtn, {
+                  [styles.active]: selectedImage === img,
+                })}
                 onClick={() => setSelectedImage(img)}
               >
-                <img
-                  src={getFullImgPath(img)}
-                  alt={`${details.name} ${index}`}
-                />
+                <img src={img} alt={product.name} />
               </button>
             ))}
           </div>
-          <div className={styles.mainImageContainer}>
-            <img src={getFullImgPath(selectedImage)} alt={details.name} />
+          <div className={styles.mainImage}>
+            <img src={selectedImage} alt={product.name} />
           </div>
         </div>
 
         <div className={styles.actions}>
-          <div className={styles.optionSection}>
-            <span className={styles.optionLabel}>Available colors</span>
-            <div className={styles.colors}>
-              {details.colorsAvailable.map(color => (
-                <Link
-                  key={color}
-                  to={`/product/${details.namespaceId}-${details.capacity.toLowerCase()}-${color}`}
-                  className={`${styles.colorCircle} ${
-                    color === details.color ? styles['colorCircle--active'] : ''
-                  }`}
-                  style={{ backgroundColor: color }}
-                />
-              ))}
+          <div className={styles.colorBlock}>
+            <p className={styles.label}>Available colors</p>
+            <div className={styles.colorsList}>
+              {product.colorsAvailable.map(color => {
+                const targetColorSlug = color
+                  .toLowerCase()
+                  .replace(/\s+/g, '-');
+
+                const parts = product.id.split('-');
+
+                parts[parts.length - 1] = targetColorSlug;
+                const targetSlug = parts.join('-');
+
+                const isSelected = color === product.color;
+
+                return (
+                  <Link
+                    key={color}
+                    to={`/${category}/${targetSlug}`}
+                    className={classNames(styles.colorCircle, {
+                      [styles.selectedColor]: isSelected,
+                    })}
+                    style={{ backgroundColor: getBgColor(color) }}
+                  />
+                );
+              })}
             </div>
           </div>
 
-          <div className={styles.optionSection}>
-            <span className={styles.optionLabel}>Select capacity</span>
-            <div className={styles.capacities}>
-              {details.capacityAvailable.map(cap => (
-                <Link
-                  key={cap}
-                  to={`/product/${details.namespaceId}-${cap.toLowerCase()}-${details.color}`}
-                  className={`${styles.capacityBtn} ${
-                    cap === details.capacity
-                      ? styles['capacityBtn--active']
-                      : ''
-                  }`}
-                >
-                  {cap}
-                </Link>
-              ))}
+          <div className={styles.capacityBlock}>
+            <p className={styles.label}>Select capacity</p>
+            <div className={styles.capacityList}>
+              {product.capacityAvailable.map(cap => {
+                const targetCapSlug = cap.toLowerCase();
+
+                const parts = product.id.split('-');
+                const currentCapNum = product.capacity.replace(/\D/g, '');
+                const capIndex = parts.findIndex(p =>
+                  p.includes(currentCapNum),
+                );
+
+                if (capIndex !== -1) {
+                  parts[capIndex] = targetCapSlug;
+                } else if (parts.length >= 2) {
+                  parts[parts.length - 2] = targetCapSlug;
+                }
+
+                const targetSlug = parts.join('-');
+                const isSelected = cap === product.capacity;
+
+                return (
+                  <Link
+                    key={cap}
+                    to={`/${category}/${targetSlug}`}
+                    className={classNames(styles.capacityBtn, {
+                      [styles.selectedCapacity]: isSelected,
+                    })}
+                  >
+                    {cap}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
           <div className={styles.priceRow}>
             <span className={styles.priceDiscount}>
-              ${details.priceDiscount}
+              ${product.priceDiscount}
             </span>
-            <span className={styles.priceRegular}>${details.priceRegular}</span>
+            <span className={styles.priceRegular}>${product.priceRegular}</span>
           </div>
 
-          <div className={styles.buttons}>
-            <button type="button" className={styles.addToCartBtn}>
-              Add to cart
+          <div className={styles.buttonsRow}>
+            <button
+              type="button"
+              className={classNames(styles.addBtn, {
+                [styles.inCart]: isAdded,
+              })}
+              onClick={() => addToCart(cartProduct)}
+            >
+              {isAdded ? 'Added to cart' : 'Add to cart'}
             </button>
-            <button type="button" className={styles.favBtn}>
-              ♡
+
+            <button
+              type="button"
+              className={classNames(styles.favBtn, {
+                [styles.favActive]: favorite,
+              })}
+              onClick={() => toggleFavorite(cartProduct)}
+            >
+              {favorite ? '❤️' : '🤍'}
             </button>
           </div>
 
-          <div className={styles.quickSpecs}>
+          <div className={styles.shortSpecs}>
             <div className={styles.specRow}>
-              <span>Screen</span>
-              <span>{details.screen}</span>
+              <span className={styles.specName}>Screen</span>
+              <span className={styles.specValue}>{product.screen}</span>
             </div>
             <div className={styles.specRow}>
-              <span>Resolution</span>
-              <span>{details.resolution}</span>
+              <span className={styles.specName}>Resolution</span>
+              <span className={styles.specValue}>{product.resolution}</span>
             </div>
             <div className={styles.specRow}>
-              <span>Processor</span>
-              <span>{details.processor}</span>
+              <span className={styles.specName}>Processor</span>
+              <span className={styles.specValue}>{product.processor}</span>
             </div>
             <div className={styles.specRow}>
-              <span>RAM</span>
-              <span>{details.ram}</span>
+              <span className={styles.specName}>RAM</span>
+              <span className={styles.specValue}>{product.ram}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={styles.detailsGrid}>
-        <div className={styles.about}>
-          <h2>About</h2>
-          {details.description.map((paragraph, idx) => (
-            <div key={idx} className={styles.paragraph}>
-              <h3>{paragraph.title}</h3>
-              <p>{paragraph.text}</p>
+      <div className={styles.bottomContent}>
+        <div className={styles.aboutSection}>
+          <h2 className={styles.sectionTitle}>About</h2>
+          {product.description.map(item => (
+            <div key={item.title} className={styles.descriptionBlock}>
+              <h3 className={styles.descTitle}>{item.title}</h3>
+              <p className={styles.descText}>{item.text}</p>
             </div>
           ))}
         </div>
 
-        <div className={styles.techSpecs}>
-          <h2>Tech specs</h2>
-          <div className={styles.specRow}>
-            <span>Screen</span>
-            <span>{details.screen}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Resolution</span>
-            <span>{details.resolution}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Processor</span>
-            <span>{details.processor}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>RAM</span>
-            <span>{details.ram}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Built in memory</span>
-            <span>{details.capacity}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Camera</span>
-            <span>{details.camera}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Zoom</span>
-            <span>{details.zoom}</span>
-          </div>
-          <div className={styles.specRow}>
-            <span>Cell</span>
-            <span>{details.cell.join(', ')}</span>
+        <div className={styles.techSpecsSection}>
+          <h2 className={styles.sectionTitle}>Tech specs</h2>
+          <div className={styles.fullSpecs}>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Screen</span>
+              <span className={styles.specValue}>{product.screen}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Resolution</span>
+              <span className={styles.specValue}>{product.resolution}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Processor</span>
+              <span className={styles.specValue}>{product.processor}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>RAM</span>
+              <span className={styles.specValue}>{product.ram}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Built in memory</span>
+              <span className={styles.specValue}>{product.capacity}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Camera</span>
+              <span className={styles.specValue}>{product.camera}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Zoom</span>
+              <span className={styles.specValue}>{product.zoom}</span>
+            </div>
+            <div className={styles.specRow}>
+              <span className={styles.specName}>Cell</span>
+              <span className={styles.specValue}>
+                {product.cell.join(', ')}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {suggestedProducts.length > 0 && (
-        <div className={styles.sliderSection}>
-          <ProductsSlider
-            title="You may also like"
-            products={suggestedProducts}
-          />
-        </div>
-      )}
+      <div className={styles.youMayLike}>
+        <ProductsSlider
+          title="You may also like"
+          products={suggestedProducts}
+        />
+      </div>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { CartItem as CartItemType } from '../../types/CartItem';
 import styles from './CartItem.module.scss';
 
@@ -16,6 +17,7 @@ export const CartItem: React.FC<Props> = ({
   onRemove,
 }) => {
   const { product, quantity } = item;
+  const productPath = `/${product.category}/${product.itemId || product.id}`;
 
   return (
     <div className={styles.cartItem}>
@@ -27,9 +29,10 @@ export const CartItem: React.FC<Props> = ({
         ×
       </button>
 
-      <img src={product.image} alt={product.name} className={styles.image} />
-
-      <p className={styles.title}>{product.name}</p>
+      <Link to={productPath} className={styles.productLink}>
+        <img src={product.image} alt={product.name} className={styles.image} />
+        <p className={styles.title}>{product.name}</p>
+      </Link>
 
       <div className={styles.quantityControls}>
         <button

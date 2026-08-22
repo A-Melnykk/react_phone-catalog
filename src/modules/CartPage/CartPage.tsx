@@ -6,14 +6,24 @@ import styles from './CartPage.module.scss';
 
 export const CartPage: React.FC = () => {
   const navigate = useNavigate();
-  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
-    useCart();
+  const {
+    cart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    clearCart,
+  } = useCart();
 
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
     0,
   );
+
+  const handleCheckout = () => {
+    alert('Thank you for your order!');
+    clearCart();
+  };
 
   return (
     <div className={styles.cartPage}>
@@ -49,7 +59,11 @@ export const CartPage: React.FC = () => {
               {`Total for ${totalItems} ${totalItems === 1 ? 'item' : 'items'}`}
             </p>
             <div className={styles.divider} />
-            <button type="button" className={styles.checkoutBtn}>
+            <button
+              type="button"
+              className={styles.checkoutBtn}
+              onClick={handleCheckout}
+            >
               Checkout
             </button>
           </div>
