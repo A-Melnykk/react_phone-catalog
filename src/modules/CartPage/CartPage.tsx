@@ -1,63 +1,60 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { CartItem } from '../../components/CartItem';
 import styles from './CartPage.module.scss';
 
 export const CartPage: React.FC = () => {
-  const { cart, increaseQuantity, decreaseQuantity, removeFromCart } =
+  const navigate = useNavigate();
+  const { cart, removeFromCart, increaseQuantity, decreaseQuantity } =
     useCart();
 
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.product.price * item.quantity,
+    0,
+  );
+
   return (
-    <div className={styles.cart}>
-      <h1 className={styles.cart__title}>Cart</h1>
+    <div className={styles.cartPage}>
+      <button
+        type="button"
+        className={styles.backBtn}
+        onClick={() => navigate(-1)}
+      >
+        ‹ Back
+      </button>
 
-      <div className={styles.cart__content}>
-        <div className={styles.cart__list}>
-          {cart.map(item => (
-            <div key={item.id} className={styles.cartItem}>
-              <button
-                type="button"
-                className={styles.removeBtn}
-                onClick={() => removeFromCart(item.product.id)}
-              >
-                ×
-              </button>
+      <h1 className={styles.title}>Cart</h1>
 
-              <img
-                src={item.product.image}
-                alt={item.product.name}
-                className={styles.itemImage}
+      {cart.length === 0 ? (
+        <p className={styles.empty}>Your cart is empty</p>
+      ) : (
+        <div className={styles.content}>
+          <div className={styles.itemList}>
+            {cart.map(item => (
+              <CartItem
+                key={item.product.id}
+                item={item}
+                onIncrease={increaseQuantity}
+                onDecrease={decreaseQuantity}
+                onRemove={removeFromCart}
               />
+            ))}
+          </div>
 
-              <span className={styles.itemTitle}>{item.product.name}</span>
-
-              <div className={styles.quantityControls}>
-                <button
-                  type="button"
-                  className={styles.qtyBtn}
-                  disabled={item.quantity <= 1}
-                  onClick={() => decreaseQuantity(item.product.id)}
-                >
-                  -
-                </button>
-
-                <span className={styles.qtyCount}>{item.quantity}</span>
-
-                <button
-                  type="button"
-                  className={styles.qtyBtn}
-                  onClick={() => increaseQuantity(item.product.id)}
-                >
-                  +
-                </button>
-              </div>
-
-              <span className={styles.itemPrice}>
-                ${item.product.price * item.quantity}
-              </span>
-            </div>
-          ))}
+          <div className={styles.totalBlock}>
+            <h2 className={styles.totalPrice}>${totalPrice}</h2>
+            <p className={styles.totalCount}>
+              {`Total for ${totalItems} ${totalItems === 1 ? 'item' : 'items'}`}
+            </p>
+            <div className={styles.divider} />
+            <button type="button" className={styles.checkoutBtn}>
+              Checkout
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

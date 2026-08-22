@@ -1,52 +1,80 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import { useFavorites } from '../../context/FavoritesContext';
 import styles from './Header.module.scss';
 
 export const Header: React.FC = () => {
+  const { cart } = useCart();
+  const { favorites } = useFavorites();
+
+  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalFavsCount = favorites ? favorites.length : 0;
+
   const getLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `${styles.header__link} ${isActive ? styles['header__link--active'] : ''}`;
+    isActive ? `${styles.link} ${styles.linkActive}` : styles.link;
 
   return (
     <header className={styles.header}>
-      <div className={styles.header__left}>
-        <Link to="/" className={styles.header__logo}>
-          <img src="./img/logo.svg" alt="Nice Gadgets Logo" />
-        </Link>
+      <div className={styles.container}>
+        <div className={styles.navGroup}>
+          <Link to="/" className={styles.logoLink}>
+            <img
+              src="img/logo.svg"
+              alt="Nice Gadgets Logo"
+              className={styles.logo}
+            />
+          </Link>
 
-        <nav className={styles.header__nav}>
-          <NavLink to="/" className={getLinkClass}>
-            Home
-          </NavLink>
-          <NavLink to="/phones" className={getLinkClass}>
-            Phones
-          </NavLink>
-          <NavLink to="/tablets" className={getLinkClass}>
-            Tablets
-          </NavLink>
-          <NavLink to="/accessories" className={getLinkClass}>
-            Accessories
-          </NavLink>
-        </nav>
-      </div>
+          <nav className={styles.nav}>
+            <NavLink to="/" className={getLinkClass}>
+              Home
+            </NavLink>
+            <NavLink to="/phones" className={getLinkClass}>
+              Phones
+            </NavLink>
+            <NavLink to="/tablets" className={getLinkClass}>
+              Tablets
+            </NavLink>
+            <NavLink to="/accessories" className={getLinkClass}>
+              Accessories
+            </NavLink>
+          </nav>
+        </div>
 
-      <div className={styles.header__actions}>
-        <NavLink
-          to="/favorites"
-          className={({ isActive }) =>
-            `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
-          }
-        >
-          <img src="./img/favourites.svg" alt="Favorites" />
-        </NavLink>
+        <div className={styles.actions}>
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              isActive
+                ? `${styles.iconBtn} ${styles.iconBtnActive}`
+                : styles.iconBtn
+            }
+          >
+            <div className={styles.iconWrapper}>
+              <div className={`${styles.icon} ${styles.favIcon}`} />
+              {totalFavsCount > 0 && (
+                <span className={styles.badge}>{totalFavsCount}</span>
+              )}
+            </div>
+          </NavLink>
 
-        <NavLink
-          to="/cart"
-          className={({ isActive }) =>
-            `${styles.header__iconLink} ${isActive ? styles['header__iconLink--active'] : ''}`
-          }
-        >
-          <img src="./img/cart.svg" alt="Cart" />
-        </NavLink>
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              isActive
+                ? `${styles.iconBtn} ${styles.iconBtnActive}`
+                : styles.iconBtn
+            }
+          >
+            <div className={styles.iconWrapper}>
+              <div className={`${styles.icon} ${styles.cartIcon}`} />
+              {totalCartCount > 0 && (
+                <span className={styles.badge}>{totalCartCount}</span>
+              )}
+            </div>
+          </NavLink>
+        </div>
       </div>
     </header>
   );

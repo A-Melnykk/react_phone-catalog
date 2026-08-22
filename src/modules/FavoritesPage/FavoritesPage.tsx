@@ -7,20 +7,18 @@ export const FavoritesPage: React.FC = () => {
   const { favorites } = useFavorites();
 
   return (
-    <div className={styles.favoritesPage}>
-      <h1 className={styles.favoritesPage__title}>Favorites</h1>
-      <p className={styles.favoritesPage__count}>{favorites.length} items</p>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Favourites</h1>
+      <p className={styles.count}>{favorites.length} items</p>
 
-      {favorites.length > 0 ? (
-        <div className={styles.favoritesPage__grid}>
+      {favorites.length === 0 ? (
+        <p className={styles.empty}>Your favorites list is empty</p>
+      ) : (
+        <div className={styles.grid}>
           {favorites.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-      ) : (
-        <p className={styles.favoritesPage__empty}>
-          Your favorites list is empty.
-        </p>
       )}
     </div>
   );
