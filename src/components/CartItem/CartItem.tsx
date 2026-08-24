@@ -1,59 +1,61 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CartItem as CartItemType } from '../../types/CartItem';
+import { useCart } from '../../context/CartContext';
 import styles from './CartItem.module.scss';
 
 interface Props {
-  item: CartItemType;
-  onIncrease: (id: number) => void;
-  onDecrease: (id: number) => void;
-  onRemove: (id: number) => void;
+  cartItem: CartItemType;
 }
 
-export const CartItem: React.FC<Props> = ({
-  item,
-  onIncrease,
-  onDecrease,
-  onRemove,
-}) => {
-  const { product, quantity } = item;
-  const productPath = `/${product.category}/${product.itemId || product.id}`;
+export const CartItem: React.FC<Props> = ({ cartItem }) => {
+  const { removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { product, quantity } = cartItem;
 
   return (
     <div className={styles.cartItem}>
       <button
         type="button"
-        className={styles.removeBtn}
-        onClick={() => onRemove(product.id)}
+        className={styles.deleteBtn}
+        onClick={() => removeFromCart(product.id)}
       >
-        ×
+        ✕
       </button>
 
-      <Link to={productPath} className={styles.productLink}>
+      <Link
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.imageLink}
+      >
         <img src={product.image} alt={product.name} className={styles.image} />
-        <p className={styles.title}>{product.name}</p>
       </Link>
 
-      <div className={styles.quantityControls}>
+      <Link
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.title}
+      >
+        {product.name}
+      </Link>
+
+      <div className={styles.counter}>
         <button
           type="button"
-          className={styles.countBtn}
-          onClick={() => onDecrease(product.id)}
+          className={styles.counterBtn}
           disabled={quantity <= 1}
+          onClick={() => decreaseQuantity(product.id)}
         >
           -
         </button>
-        <span className={styles.count}>{quantity}</span>
+        <span className={styles.quantity}>{quantity}</span>
         <button
           type="button"
-          className={styles.countBtn}
-          onClick={() => onIncrease(product.id)}
+          className={styles.counterBtn}
+          onClick={() => increaseQuantity(product.id)}
         >
           +
         </button>
       </div>
 
-      <div className={styles.price}>${product.price * quantity}</div>
+      <span className={styles.price}>${product.price * quantity}</span>
     </div>
   );
 };

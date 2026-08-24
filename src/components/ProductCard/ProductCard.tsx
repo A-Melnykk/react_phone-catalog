@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/Product';
+import styles from './ProductCard.module.scss';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
-import styles from './ProductCard.module.scss';
+import classNames from 'classnames';
 
 interface Props {
   product: Product;
@@ -13,68 +14,63 @@ export const ProductCard: React.FC<Props> = ({ product }) => {
   const { addToCart, isInCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
-  const inCart = isInCart(product.id);
+  const isAdded = isInCart(product.id);
   const favorite = isFavorite(product.id);
 
   return (
-    <div className={styles.card}>
+    <div className={styles.productCard}>
       <Link
-        to={`/product/${product.itemId}`}
-        className={styles.card__imageContainer}
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.imageLink}
       >
-        <img
-          src={product.image}
-          alt={product.name}
-          className={styles.card__image}
-        />
+        <img src={product.image} alt={product.name} className={styles.image} />
       </Link>
 
-      <Link to={`/product/${product.itemId}`} className={styles.card__title}>
+      <Link
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.title}
+      >
         {product.name}
       </Link>
 
-      <div className={styles.card__prices}>
-        <span className={styles.card__price}>${product.price}</span>
-        {product.fullPrice > product.price && (
-          <span
-            className={`${styles.card__price} ${styles['card__price--full']}`}
-          >
-            ${product.fullPrice}
-          </span>
-        )}
+      <div className={styles.priceContainer}>
+        <span className={styles.price}>${product.price}</span>
+        <span className={styles.fullPrice}>${product.fullPrice}</span>
       </div>
 
-      <div className={styles.card__specs}>
-        <div className={styles.card__specRow}>
-          <span className={styles.card__specName}>Screen</span>
-          <span className={styles.card__specValue}>{product.screen}</span>
+      <div className={styles.divider} />
+
+      <div className={styles.specs}>
+        <div className={styles.specRow}>
+          <span className={styles.specName}>Screen</span>
+          <span className={styles.specValue}>{product.screen}</span>
         </div>
-        <div className={styles.card__specRow}>
-          <span className={styles.card__specName}>Capacity</span>
-          <span className={styles.card__specValue}>{product.capacity}</span>
+        <div className={styles.specRow}>
+          <span className={styles.specName}>Capacity</span>
+          <span className={styles.specValue}>{product.capacity}</span>
         </div>
-        <div className={styles.card__specRow}>
-          <span className={styles.card__specName}>RAM</span>
-          <span className={styles.card__specValue}>{product.ram}</span>
+        <div className={styles.specRow}>
+          <span className={styles.specName}>RAM</span>
+          <span className={styles.specValue}>{product.ram}</span>
         </div>
       </div>
 
-      <div className={styles.card__buttons}>
+      <div className={styles.buttons}>
         <button
           type="button"
-          className={`${styles.card__addButton} ${
-            inCart ? styles['card__addButton--added'] : ''
-          }`}
+          className={classNames(styles.addToCart, {
+            [styles.added]: isAdded,
+          })}
           onClick={() => addToCart(product)}
         >
-          {inCart ? 'Added to cart' : 'Add to cart'}
+          {isAdded ? 'Added to cart' : 'Add to cart'}
         </button>
 
         <button
           type="button"
-          className={`${styles.card__favButton} ${
-            favorite ? styles['card__favButton--active'] : ''
-          }`}
+          className={classNames(styles.favorite, {
+            [styles.favoriteActive]: favorite,
+          })}
           onClick={() => toggleFavorite(product)}
         >
           {favorite ? '❤️' : '🤍'}

@@ -1,31 +1,70 @@
 import { Product } from '../types/Product';
 import { ProductDetails } from '../types/ProductDetails';
 
-const rawBase = import.meta.env.BASE_URL || '/';
-const normalizedBase = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+export const getProducts = async (): Promise<Product[]> => {
+  try {
+    const [phonesRes, tabletsRes, accessoriesRes] = await Promise.all([
+      fetch('/api/phones.json'),
+      fetch('/api/tablets.json'),
+      fetch('/api/accessories.json'),
+    ]);
 
-function request<T>(url: string): Promise<T> {
-  return fetch(`${normalizedBase}${url}`).then(response => {
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.status}`);
-    }
+    const phones: Product[] = phonesRes.ok ? await phonesRes.json() : [];
+    const tablets: Product[] = tabletsRes.ok ? await tabletsRes.json() : [];
+    const accessories: Product[] = accessoriesRes.ok
+      ? await accessoriesRes.json()
+      : [];
 
-    return response.json();
-  });
-}
+    const allProducts = [...phones, ...tablets, ...accessories];
 
-export const getProducts = () => request<Product[]>('api/products.json');
+    return allProducts.map((p: Product) => ({
+      ...p,
+      category:
+        p.category ||
+        (phones.some(phone => phone.id === p.id)
+          ? 'phones'
+          : tablets.some(tablet => tablet.id === p.id)
+            ? 'tablets'
+            : 'accessories'),
+      price: Number(p.price) || 0,
+      fullPrice: Number(p.fullPrice) || Number(p.price) + 100 || 0,
+      image: p.image.startsWith('/') ? p.image : `/${p.image}`,
+    }));
+  } catch {
+    return [];
+  }
+};
 
-export const getProductDetails = (
+export const getProductDetails = async (
   productId: string,
 ): Promise<ProductDetails | null> => {
-  return Promise.all([
-    request<ProductDetails[]>('api/phones.json').catch(() => []),
-    request<ProductDetails[]>('api/tablets.json').catch(() => []),
-    request<ProductDetails[]>('api/accessories.json').catch(() => []),
-  ]).then(([phones, tablets, accessories]) => {
-    const allDetails = [...phones, ...tablets, ...accessories];
+  try {
+    const [phonesRes, tabletsRes, accessoriesRes] = await Promise.all([
+      fetch('/api/phones.json'),
+      fetch('/api/tablets.json'),
+      fetch('/api/accessories.json'),
+    ]);
 
-    return allDetails.find(item => item.id === productId) || null;
-  });
+    const phones: ProductDetails[] = phonesRes.ok ? await phonesRes.json() : [];
+    const tablets: ProductDetails[] = tabletsRes.ok
+      ? await tabletsRes.json()
+      : [];
+    const accessories: ProductDetails[] = accessoriesRes.ok
+      ? await accessoriesRes.json()
+      : [];
+
+    const allDetails = [...phones, ...tablets, ...accessories];
+    const found = allDetails.find(product => product.id === productId);
+
+    if (!found) {
+      return null;
+    }
+
+    return {
+      ...found,
+      images: found.images.map(img => (img.startsWith('/') ? img : `/${img}`)),
+    };
+  } catch {
+    return null;
+  }
 };

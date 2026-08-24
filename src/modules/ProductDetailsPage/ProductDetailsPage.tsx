@@ -12,7 +12,11 @@ import { useFavorites } from '../../context/FavoritesContext';
 import styles from './ProductDetailsPage.module.scss';
 
 export const ProductDetailsPage: React.FC = () => {
-  const { productId } = useParams<{ productId: string }>();
+  const { category = 'phones', productId } = useParams<{
+    category?: string;
+    productId: string;
+  }>();
+
   const [product, setProduct] = useState<ProductDetails | null>(null);
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +54,6 @@ export const ProductDetailsPage: React.FC = () => {
     return <p className={styles.notFound}>Product not found</p>;
   }
 
-  const category = 'phones';
   const isAdded = isInCart(Number(product.id));
   const favorite = isFavorite(Number(product.id));
 
