@@ -1,67 +1,99 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
-import { CartItem } from '../../components/CartItem';
 import styles from './CartPage.module.scss';
 
 export const CartPage: React.FC = () => {
-  const navigate = useNavigate();
   const {
     cart,
     removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
+    changeQuantity,
     clearCart,
+    totalPrice,
+    totalQuantity,
   } = useCart();
-
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0,
-  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCheckout = () => {
-    alert('Thank you for your order!');
+    setIsModalOpen(true);
     clearCart();
   };
 
-  return (
-    <div className={styles.cartPage}>
-      <button
-        type="button"
-        className={styles.backBtn}
-        onClick={() => navigate(-1)}
-      >
-        ‹ Back
-      </button>
+  if (cart.length === 0 && !isModalOpen) {
+    return (
+      <div className={styles.empty}>
+        <h1>Your cart is empty</h1>
+      </div>
+    );
+  }
 
+  return (
+    <div className={styles.container}>
       <h1 className={styles.title}>Cart</h1>
 
-      {cart.length === 0 ? (
-        <p className={styles.empty}>Your cart is empty</p>
+      {isModalOpen ? (
+        <div className={styles.successMessage}>
+          <h2>Checkout successfully completed! 🎉</h2>
+          <p>Thank you for your purchase. We will contact you soon.</p>
+        </div>
       ) : (
         <div className={styles.content}>
-          <div className={styles.itemList}>
+          <div className={styles.itemsList}>
             {cart.map(item => (
-              <CartItem
+              <div
                 key={item.product.id}
-                item={item}
-                onIncrease={increaseQuantity}
-                onDecrease={decreaseQuantity}
-                onRemove={removeFromCart}
-              />
+                className={styles.cartItem}
+                data-cy="cartItem"
+              >
+                <button
+                  type="button"
+                  className={styles.deleteButton}
+                  onClick={() => removeFromCart(item.product.id)}
+                  data-cy="cartDeleteButton"
+                >
+                  ✕
+                </button>
+
+                <img
+                  src={`/${item.product.image}`}
+                  alt={item.product.name}
+                  className={styles.image}
+                />
+
+                <span className={styles.itemName}>{item.product.name}</span>
+
+                <div className={styles.counter}>
+                  <button
+                    type="button"
+                    disabled={item.quantity <= 1}
+                    onClick={() => changeQuantity(item.product.id, -1)}
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    type="button"
+                    onClick={() => changeQuantity(item.product.id, 1)}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <span className={styles.price}>
+                  ${item.product.price * item.quantity}
+                </span>
+              </div>
             ))}
           </div>
 
-          <div className={styles.totalBlock}>
-            <h2 className={styles.totalPrice}>${totalPrice}</h2>
-            <p className={styles.totalCount}>
-              {`Total for ${totalItems} ${totalItems === 1 ? 'item' : 'items'}`}
-            </p>
+          <div className={styles.checkoutBox}>
+            <div className={styles.totalPrice}>${totalPrice}</div>
+            <div className={styles.totalItems}>
+              Total for {totalQuantity} items
+            </div>
             <div className={styles.divider} />
             <button
               type="button"
-              className={styles.checkoutBtn}
+              className={styles.checkoutButton}
               onClick={handleCheckout}
             >
               Checkout

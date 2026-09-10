@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const CartItem: React.FC<Props> = ({ cartItem }) => {
-  const { removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { removeFromCart, changeQuantity } = useCart();
   const { product, quantity } = cartItem;
 
   return (
@@ -26,7 +26,11 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
         to={`/${product.category}/${product.itemId}`}
         className={styles.imageLink}
       >
-        <img src={product.image} alt={product.name} className={styles.image} />
+        <img
+          src={`/img/${product.image}`}
+          alt={product.name}
+          className={styles.image}
+        />
       </Link>
 
       <Link
@@ -41,7 +45,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
           type="button"
           className={styles.counterBtn}
           disabled={quantity <= 1}
-          onClick={() => decreaseQuantity(product.id)}
+          onClick={() => changeQuantity(product.id, -1)}
         >
           -
         </button>
@@ -49,7 +53,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
         <button
           type="button"
           className={styles.counterBtn}
-          onClick={() => increaseQuantity(product.id)}
+          onClick={() => changeQuantity(product.id, 1)}
         >
           +
         </button>

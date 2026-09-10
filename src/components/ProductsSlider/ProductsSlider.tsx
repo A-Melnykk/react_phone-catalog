@@ -1,65 +1,66 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { Product } from '../../types/Product';
-import { ProductCard } from '../ProductCard';
+import { ProductCard } from '../ProductCard/ProductCard';
 import styles from './ProductsSlider.module.scss';
 
 interface Props {
   title: string;
   products: Product[];
+  hasDiscount?: boolean;
 }
 
-export const ProductsSlider: React.FC<Props> = ({ title, products }) => {
-  const [startIndex, setStartIndex] = useState(0);
+export const ProductsSlider: React.FC<Props> = ({
+  title,
+  products,
+  hasDiscount = true,
+}) => {
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  const visibleCards = 4;
-  const maxIndex = Math.max(0, products.length - visibleCards);
+  const scroll = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const { scrollLeft, clientWidth } = sliderRef.current;
+      const scrollAmount = clientWidth * 0.75;
 
-  const handlePrev = () => {
-    setStartIndex(prev => Math.max(0, prev - 1));
+      sliderRef.current.scrollTo({
+        left:
+          direction === 'left'
+            ? scrollLeft - scrollAmount
+            : scrollLeft + scrollAmount,
+        behavior: 'smooth',
+      });
+    }
   };
-
-  const handleNext = () => {
-    setStartIndex(prev => Math.min(maxIndex, prev + 1));
-  };
-
-  const translateX = startIndex * 288;
 
   return (
-    <section className={styles.productsSlider}>
-      <div className={styles.productsSlider__header}>
-        <h2 className={styles.productsSlider__title}>{title}</h2>
-
-        <div className={styles.productsSlider__buttons}>
+    <section className={styles.section}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>{title}</h2>
+        <div className={styles.buttons}>
           <button
             type="button"
-            className={styles.productsSlider__btn}
-            onClick={handlePrev}
-            disabled={startIndex === 0}
+            className={styles.arrowButton}
+            onClick={() => scroll('left')}
+            aria-label="Scroll left"
           >
             ‹
           </button>
           <button
             type="button"
-            className={styles.productsSlider__btn}
-            onClick={handleNext}
-            disabled={startIndex >= maxIndex}
+            className={styles.arrowButton}
+            onClick={() => scroll('right')}
+            aria-label="Scroll right"
           >
             ›
           </button>
         </div>
       </div>
 
-      <div className={styles.productsSlider__content}>
-        <div
-          className={styles.productsSlider__track}
-          style={{ transform: `translateX(-${translateX}px)` }}
-        >
-          {products.map(product => (
-            <div key={product.id} className={styles.productsSlider__item}>
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
+      <div className={styles.sliderContainer} ref={sliderRef}>
+        {products.map(product => (
+          <div key={product.id} className={styles.slideItem}>
+            <ProductCard product={product} hasDiscount={hasDiscount} />
+          </div>
+        ))}
       </div>
     </section>
   );

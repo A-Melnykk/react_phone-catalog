@@ -23,7 +23,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--phones']}`}
           >
             <img
-              src="./img/category-phones.png"
+              src="img/category-phones.png"
               alt="Mobile phones"
               className={styles.categories__image}
             />
@@ -37,7 +37,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--tablets']}`}
           >
             <img
-              src="./img/category-tablets.png"
+              src="img/category-tablets.png"
               alt="Tablets"
               className={styles.categories__image}
             />
@@ -53,7 +53,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--accessories']}`}
           >
             <img
-              src="./img/category-accessories.png"
+              src="img/category-accessories.png"
               alt="Accessories"
               className={styles.categories__image}
             />

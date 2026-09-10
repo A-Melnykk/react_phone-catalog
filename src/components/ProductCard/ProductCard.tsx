@@ -1,79 +1,90 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/Product';
-import styles from './ProductCard.module.scss';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
-import classNames from 'classnames';
+import styles from './ProductCard.module.scss';
 
 interface Props {
   product: Product;
+  hasDiscount?: boolean;
 }
 
-export const ProductCard: React.FC<Props> = ({ product }) => {
-  const { addToCart, isInCart } = useCart();
+export const ProductCard: React.FC<Props> = ({
+  product,
+  hasDiscount = true,
+}) => {
+  const { cart, addToCart, removeFromCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
-  const isAdded = isInCart(product.id);
+  const isInCart = cart.some(item => item.product.id === product.id);
   const favorite = isFavorite(product.id);
 
+  const handleCartClick = () => {
+    if (isInCart) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
+  };
+
+  const showDiscount =
+    hasDiscount && product.fullPrice && product.fullPrice > product.price;
+
   return (
-    <div className={styles.productCard}>
-      <Link
-        to={`/${product.category}/${product.itemId}`}
-        className={styles.imageLink}
-      >
-        <img src={product.image} alt={product.name} className={styles.image} />
+    <div className={styles.card}>
+      <Link to={`/products/${product.itemId}`} className={styles.imageLink}>
+        <img
+          src={`/img/${product.image}`}
+          alt={product.name}
+          className={styles.image}
+        />
       </Link>
 
-      <Link
-        to={`/${product.category}/${product.itemId}`}
-        className={styles.title}
-      >
+      <Link to={`/products/${product.itemId}`} className={styles.title}>
         {product.name}
       </Link>
 
       <div className={styles.priceContainer}>
         <span className={styles.price}>${product.price}</span>
-        <span className={styles.fullPrice}>${product.fullPrice}</span>
+        {showDiscount && (
+          <span className={styles.fullPrice}>${product.fullPrice}</span>
+        )}
       </div>
 
       <div className={styles.divider} />
 
       <div className={styles.specs}>
-        <div className={styles.specRow}>
-          <span className={styles.specName}>Screen</span>
+        <div className={styles.specItem}>
+          <span className={styles.specLabel}>Screen</span>
           <span className={styles.specValue}>{product.screen}</span>
         </div>
-        <div className={styles.specRow}>
-          <span className={styles.specName}>Capacity</span>
+        <div className={styles.specItem}>
+          <span className={styles.specLabel}>Capacity</span>
           <span className={styles.specValue}>{product.capacity}</span>
         </div>
-        <div className={styles.specRow}>
-          <span className={styles.specName}>RAM</span>
+        <div className={styles.specItem}>
+          <span className={styles.specLabel}>RAM</span>
           <span className={styles.specValue}>{product.ram}</span>
         </div>
       </div>
 
-      <div className={styles.buttons}>
+      <div className={styles.actions}>
         <button
           type="button"
-          className={classNames(styles.addToCart, {
-            [styles.added]: isAdded,
-          })}
-          onClick={() => addToCart(product)}
+          className={`${styles.cartButton} ${isInCart ? styles.added : ''}`}
+          onClick={handleCartClick}
         >
-          {isAdded ? 'Added to cart' : 'Add to cart'}
+          {isInCart ? 'Added to cart' : 'Add to cart'}
         </button>
 
         <button
           type="button"
-          className={classNames(styles.favorite, {
-            [styles.favoriteActive]: favorite,
-          })}
+          className={`${styles.favButton} ${favorite ? styles.active : ''}`}
           onClick={() => toggleFavorite(product)}
+          aria-label="favorite"
         >
-          {favorite ? '❤️' : '🤍'}
+          <span className={favorite ? styles.favIconActive : styles.favIcon} />
         </button>
       </div>
     </div>

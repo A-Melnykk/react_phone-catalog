@@ -1,28 +1,36 @@
 import React, { useEffect, useState } from 'react';
-import { getProducts } from '../../api/products';
 import { Product } from '../../types/Product';
-import { PicturesSlider } from '../../components/PicturesSlider';
-import { ProductsSlider } from '../../components/ProductsSlider';
-import { Categories } from '../../components/Categories';
+import { PicturesSlider } from '../../components/PicturesSlider/PicturesSlider';
+import { Categories } from '../../components/Categories/Categories';
+import { ProductsSlider } from '../../components/ProductsSlider/ProductsSlider';
 import styles from './HomePage.module.scss';
 
 export const HomePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProducts().then(setProducts);
+    fetch('/api/products.json')
+      .then(res => res.json())
+      .then((data: Product[]) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
 
-  const brandNewProducts = [...products]
-    .sort((a, b) => b.year - a.year || b.price - a.price)
-    .map(product => ({
-      ...product,
-      fullPrice: product.price,
-    }));
+  const brandNewProducts = [...products].sort((a, b) => b.year - a.year);
 
   const hotPricesProducts = [...products]
-    .filter(product => product.fullPrice > product.price)
-    .sort((a, b) => b.fullPrice - b.price - (a.fullPrice - a.price));
+    .filter(product => product.fullPrice && product.fullPrice > product.price)
+    .sort((a, b) => {
+      const discountA = (a.fullPrice || 0) - a.price;
+      const discountB = (b.fullPrice || 0) - b.price;
+
+      return discountB - discountA;
+    });
 
   const phonesCount = products.filter(p => p.category === 'phones').length;
   const tabletsCount = products.filter(p => p.category === 'tablets').length;
@@ -30,12 +38,21 @@ export const HomePage: React.FC = () => {
     p => p.category === 'accessories',
   ).length;
 
+  if (loading) {
+    return <div className={styles.loader}>Loading...</div>;
+  }
+
   return (
-    <div className={styles.homePage}>
-      <h1 className={styles.homePage__title}>Product Catalog</h1>
+    <div className={styles.container}>
+      <h1 className={styles.visuallyHidden}>Product Catalog</h1>
+
       <PicturesSlider />
 
-      <ProductsSlider title="Brand new" products={brandNewProducts} />
+      <ProductsSlider
+        title="Brand new"
+        products={brandNewProducts}
+        hasDiscount={false}
+      />
 
       <Categories
         phonesCount={phonesCount}
