@@ -8,6 +8,10 @@ interface Props {
   accessoriesCount: number;
 }
 
+const BASE_URL = import.meta.env.BASE_URL;
+const getImgPath = (path: string) =>
+  `${BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
+
 export const Categories: React.FC<Props> = ({
   phonesCount,
   tabletsCount,
@@ -23,7 +27,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--phones']}`}
           >
             <img
-              src="img/category-phones.png"
+              src={getImgPath('img/category-phones.png')}
               alt="Mobile phones"
               className={styles.categories__image}
             />
@@ -37,7 +41,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--tablets']}`}
           >
             <img
-              src="img/category-tablets.png"
+              src={getImgPath('img/category-tablets.png')}
               alt="Tablets"
               className={styles.categories__image}
             />
@@ -53,7 +57,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--accessories']}`}
           >
             <img
-              src="img/category-accessories.png"
+              src={getImgPath('img/category-accessories.png')}
               alt="Accessories"
               className={styles.categories__image}
             />

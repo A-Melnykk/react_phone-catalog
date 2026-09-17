@@ -22,7 +22,7 @@ export const ProductDetailsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState('');
 
-  const { addToCart, isInCart } = useCart();
+  const { addToCart, cart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const ProductDetailsPage: React.FC = () => {
     return <p className={styles.notFound}>Product not found</p>;
   }
 
-  const isAdded = isInCart(Number(product.id));
+  const isAdded = cart.some(item => item.product.id === Number(product.id));
   const favorite = isFavorite(Number(product.id));
 
   const cartProduct: Product = {

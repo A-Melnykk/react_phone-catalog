@@ -20,14 +20,16 @@ export const CartPage: React.FC = () => {
 
   if (cart.length === 0 && !isModalOpen) {
     return (
-      <div className={styles.empty}>
-        <h1>Your cart is empty</h1>
+      <div className={styles.cartPage}>
+        <div className={styles.emptyCart}>
+          <h1>Your cart is empty</h1>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.cartPage}>
       <h1 className={styles.title}>Cart</h1>
 
       {isModalOpen ? (
@@ -38,62 +40,69 @@ export const CartPage: React.FC = () => {
       ) : (
         <div className={styles.content}>
           <div className={styles.itemsList}>
-            {cart.map(item => (
-              <div
-                key={item.product.id}
-                className={styles.cartItem}
-                data-cy="cartItem"
-              >
-                <button
-                  type="button"
-                  className={styles.deleteButton}
-                  onClick={() => removeFromCart(item.product.id)}
-                  data-cy="cartDeleteButton"
+            {cart.map(item => {
+              const imagePath = item.product.image.startsWith('/')
+                ? item.product.image.slice(1)
+                : item.product.image;
+
+              return (
+                <div
+                  key={item.product.id}
+                  className={styles.cartItem}
+                  data-cy="cartItem"
                 >
-                  ✕
-                </button>
-
-                <img
-                  src={`/${item.product.image}`}
-                  alt={item.product.name}
-                  className={styles.image}
-                />
-
-                <span className={styles.itemName}>{item.product.name}</span>
-
-                <div className={styles.counter}>
                   <button
                     type="button"
-                    disabled={item.quantity <= 1}
-                    onClick={() => changeQuantity(item.product.id, -1)}
+                    className={styles.deleteButton}
+                    onClick={() => removeFromCart(item.product.id)}
+                    data-cy="cartDeleteButton"
                   >
-                    -
+                    ✕
                   </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    type="button"
-                    onClick={() => changeQuantity(item.product.id, 1)}
-                  >
-                    +
-                  </button>
+
+                  <img
+                    src={`${import.meta.env.BASE_URL}${imagePath}`}
+                    alt={item.product.name}
+                    className={styles.image}
+                  />
+
+                  <span className={styles.itemName}>{item.product.name}</span>
+
+                  <div className={styles.counter}>
+                    <button
+                      type="button"
+                      disabled={item.quantity <= 1}
+                      onClick={() => changeQuantity(item.product.id, -1)}
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => changeQuantity(item.product.id, 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <span className={styles.price}>
+                    ${item.product.price * item.quantity}
+                  </span>
                 </div>
-
-                <span className={styles.price}>
-                  ${item.product.price * item.quantity}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className={styles.checkoutBox}>
-            <div className={styles.totalPrice}>${totalPrice}</div>
-            <div className={styles.totalItems}>
-              Total for {totalQuantity} items
+          <div className={styles.checkoutBlock}>
+            <div className={styles.totalAmount}>
+              <span className={styles.totalPrice}>${totalPrice}</span>
+              <span className={styles.totalItems}>
+                Total for {totalQuantity} items
+              </span>
             </div>
-            <div className={styles.divider} />
             <button
               type="button"
-              className={styles.checkoutButton}
+              className={styles.checkoutBtn}
               onClick={handleCheckout}
             >
               Checkout

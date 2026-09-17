@@ -32,16 +32,24 @@ export const ProductCard: React.FC<Props> = ({
     hasDiscount && product.fullPrice && product.fullPrice > product.price;
 
   return (
-    <div className={styles.card}>
-      <Link to={`/products/${product.itemId}`} className={styles.imageLink}>
+    <div className={styles.card} data-cy="productCard">
+      <Link
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.imageLink}
+      >
         <img
-          src={`/img/${product.image}`}
+          src={
+            product.image.startsWith('/') ? product.image : `/${product.image}`
+          }
           alt={product.name}
           className={styles.image}
         />
       </Link>
 
-      <Link to={`/products/${product.itemId}`} className={styles.title}>
+      <Link
+        to={`/${product.category}/${product.itemId}`}
+        className={styles.title}
+      >
         {product.name}
       </Link>
 

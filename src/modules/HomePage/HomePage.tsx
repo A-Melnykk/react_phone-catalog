@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Product } from '../../types/Product';
+import { getProducts } from '../../api/products';
 import { PicturesSlider } from '../../components/PicturesSlider/PicturesSlider';
 import { Categories } from '../../components/Categories/Categories';
 import { ProductsSlider } from '../../components/ProductsSlider/ProductsSlider';
@@ -10,9 +11,8 @@ export const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/products.json')
-      .then(res => res.json())
-      .then((data: Product[]) => {
+    getProducts()
+      .then(data => {
         setProducts(data);
         setLoading(false);
       })

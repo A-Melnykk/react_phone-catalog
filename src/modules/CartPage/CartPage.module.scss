@@ -48,6 +48,71 @@
     gap: 16px;
   }
 
+  .cartItem {
+    display: flex;
+    align-items: center;
+    background-color: #0f1117;
+    border: 1px solid #323542;
+    border-radius: 16px;
+    padding: 16px 24px;
+    gap: 16px;
+
+    .deleteButton {
+      background: none;
+      border: none;
+      color: #75767f;
+      cursor: pointer;
+      font-size: 16px;
+
+      &:hover {
+        color: #f1f2f9;
+      }
+    }
+
+    .image {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+
+    .itemName {
+      flex-grow: 1;
+      color: #f1f2f9;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #f1f2f9;
+
+      button {
+        background: none;
+        border: 1px solid #323542;
+        color: #f1f2f9;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f1f2f9;
+      min-width: 80px;
+      text-align: right;
+    }
+  }
+
   .checkoutBlock {
     display: flex;
     flex-direction: column;
@@ -89,8 +154,21 @@
 
       &:hover {
         opacity: 0.9;
-        text-decoration: underline;
       }
+    }
+  }
+
+  .successMessage {
+    text-align: center;
+    color: #f1f2f9;
+    margin-top: 60px;
+
+    h2 {
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #75767f;
     }
   }
 

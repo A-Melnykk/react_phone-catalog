@@ -1,25 +1,28 @@
 .card {
   width: 272px;
   padding: 32px;
-  background-color: #fff;
-  border: 1px solid #e2e6e9;
+  background-color: #161827;
+  border: 1px solid #323542;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     transform: translateY(-4px);
+    border-color: #4a4d5e;
   }
 }
 
 .imageLink {
   height: 196px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 24px;
+  overflow: hidden;
 }
 
 .image {
@@ -31,7 +34,7 @@
 .title {
   font-size: 14px;
   line-height: 21px;
-  color: #0f1111;
+  color: #f1f2f3;
   text-decoration: none;
   margin-bottom: 8px;
   display: -webkit-box;
@@ -40,11 +43,11 @@
   overflow: hidden;
 
   &:hover {
-    color: #b4bdc3;
+    color: #9097a2;
   }
 }
 
-.prices {
+.priceContainer {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -54,19 +57,19 @@
 .price {
   font-size: 22px;
   font-weight: 700;
-  color: #0f1111;
+  color: #f1f2f3;
 }
 
 .fullPrice {
   font-size: 16px;
   font-weight: 500;
-  color: #89939a;
+  color: #757982;
   text-decoration: line-through;
 }
 
 .divider {
   height: 1px;
-  background-color: #e2e6e9;
+  background-color: #323542;
   margin-bottom: 16px;
 }
 
@@ -84,11 +87,11 @@
 }
 
 .specLabel {
-  color: #89939a;
+  color: #757982;
 }
 
 .specValue {
-  color: #0f1111;
+  color: #f1f2f3;
   font-weight: 500;
 }
 
@@ -96,12 +99,14 @@
   display: flex;
   gap: 8px;
   margin-top: auto;
+  align-items: center;
+  width: 100%;
 }
 
 .cartButton {
   flex: 1;
   height: 40px;
-  background-color: #27ae60;
+  background-color: #905bff;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -110,32 +115,62 @@
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #219653;
+    background-color: #7b44ff;
   }
 
-  &.inCart {
-    background-color: #fff;
-    color: #27ae60;
-    border: 1px solid #27ae60;
+  &.added {
+    background-color: transparent;
+    color: #905bff;
+    border: 1px solid #905bff;
   }
 }
 
-.favoriteButton {
+.favButton {
+  flex: 0 0 40px;
   width: 40px;
   height: 40px;
-  background-color: #fff;
-  border: 1px solid #b4bdc3;
+  background-color: transparent;
+  border: 1px solid #323542;
   border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  font-size: 18px;
-  color: #89939a;
   transition: all 0.2s;
 
-  &:hover, &.active {
-    border-color: #eb5757;
-    color: #eb5757;
+  &:hover {
+    border-color: #757982;
+  }
+
+  &.active {
+    border-color: #323542;
+  }
+}
+
+.favIcon,
+.favIconActive {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  font-style: normal;
+  line-height: 18px;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.favIcon {
+  color: #757982;
+
+  &::before {
+    content: '♡';
+  }
+}
+
+.favIconActive {
+  color: #eb5757;
+
+  &::before {
+    content: '♥';
   }
 }

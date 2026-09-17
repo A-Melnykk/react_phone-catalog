@@ -13,11 +13,12 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
   const { product, quantity } = cartItem;
 
   return (
-    <div className={styles.cartItem}>
+    <div className={styles.cartItem} data-cy="cartItem">
       <button
         type="button"
         className={styles.deleteBtn}
         onClick={() => removeFromCart(product.id)}
+        data-cy="cartDeleteButton"
       >
         ✕
       </button>
@@ -27,7 +28,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
         className={styles.imageLink}
       >
         <img
-          src={`/img/${product.image}`}
+          src={`/${product.image}`}
           alt={product.name}
           className={styles.image}
         />
