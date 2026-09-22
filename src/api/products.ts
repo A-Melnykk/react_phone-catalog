@@ -1,13 +1,7 @@
 import { Product } from '../types/Product';
 import { ProductDetails } from '../types/ProductDetails';
 
-const getBaseUrl = () => {
-  const url = import.meta.env.BASE_URL || '/';
-
-  return url.endsWith('/') ? url : `${url}/`;
-};
-
-const normalizePath = (path: string) => {
+export const normalizePath = (path: string) => {
   if (!path) {
     return '';
   }
@@ -16,14 +10,16 @@ const normalizePath = (path: string) => {
     return path;
   }
 
-  const baseUrl = getBaseUrl();
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const baseUrl = import.meta.env.BASE_URL || '/';
 
-  if (cleanPath.startsWith(baseUrl.slice(1))) {
-    return `/${cleanPath}`;
+  if (path.startsWith(baseUrl)) {
+    return path;
   }
 
-  return `${baseUrl}${cleanPath}`;
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+  return `${cleanBase}${cleanPath}`;
 };
 
 export const getProducts = async (): Promise<Product[]> => {

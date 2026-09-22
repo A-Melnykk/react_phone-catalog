@@ -28,7 +28,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
         className={styles.imageLink}
       >
         <img
-          src={`/${product.image}`}
+          src={`/${product.image.replace(/^\/+/, '').replace(/^react_phone-catalog\//, '')}`}
           alt={product.name}
           className={styles.image}
         />
