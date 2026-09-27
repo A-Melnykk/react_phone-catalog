@@ -21,8 +21,9 @@ export const CatalogPage: React.FC<Props> = ({ title, category }) => {
   useEffect(() => {
     setLoading(true);
     const BASE_URL = import.meta.env.BASE_URL || '/';
+    const normalizedBase = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
 
-    fetch(`${BASE_URL}api/products.json`)
+    fetch(`${normalizedBase}api/products.json`)
       .then(res => res.json())
       .then((data: Product[]) => {
         const filtered = data.filter(p => p.category === category);
