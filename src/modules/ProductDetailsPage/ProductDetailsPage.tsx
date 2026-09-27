@@ -25,6 +25,9 @@ export const ProductDetailsPage: React.FC = () => {
   const { addToCart, cart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
 
+  const BASE_URL = import.meta.env.BASE_URL || '/';
+  const normalizedBase = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
+
   useEffect(() => {
     if (!productId) {
       return;
@@ -72,6 +75,12 @@ export const ProductDetailsPage: React.FC = () => {
     image: product.images[0],
   };
 
+  const getImageUrl = (img: string) => {
+    const cleanImg = img.startsWith('/') ? img.slice(1) : img;
+
+    return `${normalizedBase}${cleanImg}`;
+  };
+
   return (
     <div className={styles.productDetails}>
       <div className={styles.breadcrumbs}>
@@ -100,12 +109,12 @@ export const ProductDetailsPage: React.FC = () => {
                 })}
                 onClick={() => setSelectedImage(img)}
               >
-                <img src={img} alt={product.name} />
+                <img src={getImageUrl(img)} alt={product.name} />
               </button>
             ))}
           </div>
           <div className={styles.mainImage}>
-            <img src={selectedImage} alt={product.name} />
+            <img src={getImageUrl(selectedImage)} alt={product.name} />
           </div>
         </div>
 
@@ -277,7 +286,7 @@ export const ProductDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className={styles.youMayLike}>
+      <div className={styles.youMayAlsoLike}>
         <ProductsSlider
           title="You may also like"
           products={suggestedProducts}
