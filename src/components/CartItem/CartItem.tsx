@@ -37,6 +37,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
       <Link
         to={`/${product.category}/${product.itemId}`}
         className={styles.title}
+        style={{ cursor: 'pointer' }}
       >
         {product.name}
       </Link>

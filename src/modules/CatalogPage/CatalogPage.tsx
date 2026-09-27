@@ -79,7 +79,7 @@ export const CatalogPage: React.FC<Props> = ({ title, category }) => {
       <p className={styles.count}>{products.length} models</p>
 
       <div className={styles.filters}>
-        <div>
+        <div className={styles.filterGroup}>
           <label htmlFor="sort-select" className={styles.label}>
             Sort by
           </label>
@@ -95,7 +95,7 @@ export const CatalogPage: React.FC<Props> = ({ title, category }) => {
           </select>
         </div>
 
-        <div>
+        <div className={styles.filterGroup}>
           <label htmlFor="per-page-select" className={styles.label}>
             Items on page
           </label>

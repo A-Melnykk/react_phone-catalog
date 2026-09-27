@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { normalizePath } from '../../api/products';
 import styles from './PicturesSlider.module.scss';
 
 const BANNERS = [
-  './img/banner-phones.png',
-  './img/banner-tablets.png',
-  './img/banner-accessories.png',
+  '/img/banner-phones.png',
+  '/img/banner-tablets.png',
+  '/img/banner-accessories.png',
 ];
 
 export const PicturesSlider: React.FC = () => {
@@ -46,7 +47,7 @@ export const PicturesSlider: React.FC = () => {
             {BANNERS.map((banner, index) => (
               <div key={banner} className={styles.picturesSlider__slide}>
                 <img
-                  src={banner}
+                  src={normalizePath(banner)}
                   alt={`Banner ${index + 1}`}
                   className={styles.picturesSlider__image}
                 />

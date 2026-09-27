@@ -12,7 +12,7 @@ interface Props {
 
 export const ProductCard: React.FC<Props> = ({
   product,
-  hasDiscount = true,
+  hasDiscount = false,
 }) => {
   const { cart, addToCart, removeFromCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
+import { normalizePath } from '../../api/products';
 import styles from './Header.module.scss';
 
 export const Header: React.FC = () => {
@@ -20,7 +21,7 @@ export const Header: React.FC = () => {
         <div className={styles.navGroup}>
           <Link to="/" className={styles.logoLink}>
             <img
-              src="img/logo.svg"
+              src={normalizePath('/img/logo.svg')}
               alt="Nice Gadgets Logo"
               className={styles.logo}
             />
