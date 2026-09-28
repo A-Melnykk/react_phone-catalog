@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+import { normalizePath } from '../../api/products';
 import styles from './CartPage.module.scss';
 
 export const CartPage: React.FC = () => {
@@ -41,10 +42,6 @@ export const CartPage: React.FC = () => {
         <div className={styles.content}>
           <div className={styles.itemsList}>
             {cart.map(item => {
-              const imagePath = item.product.image.startsWith('/')
-                ? item.product.image.slice(1)
-                : item.product.image;
-
               return (
                 <div
                   key={item.product.id}
@@ -61,7 +58,7 @@ export const CartPage: React.FC = () => {
                   </button>
 
                   <img
-                    src={`${import.meta.env.BASE_URL}${imagePath}`}
+                    src={normalizePath(item.product.image)}
                     alt={item.product.name}
                     className={styles.image}
                   />

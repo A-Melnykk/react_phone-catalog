@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { normalizePath } from '../../api/products';
 import styles from './Categories.module.scss';
 
 interface Props {
@@ -7,10 +8,6 @@ interface Props {
   tabletsCount: number;
   accessoriesCount: number;
 }
-
-const BASE_URL = import.meta.env.BASE_URL;
-const getImgPath = (path: string) =>
-  `${BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`;
 
 export const Categories: React.FC<Props> = ({
   phonesCount,
@@ -27,7 +24,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--phones']}`}
           >
             <img
-              src={getImgPath('img/category-phones.png')}
+              src={normalizePath('img/category-phones.png')}
               alt="Mobile phones"
               className={styles.categories__image}
             />
@@ -41,7 +38,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--tablets']}`}
           >
             <img
-              src={getImgPath('img/category-tablets.png')}
+              src={normalizePath('img/category-tablets.png')}
               alt="Tablets"
               className={styles.categories__image}
             />
@@ -57,7 +54,7 @@ export const Categories: React.FC<Props> = ({
             className={`${styles.categories__imageWrapper} ${styles['categories__imageWrapper--accessories']}`}
           >
             <img
-              src={getImgPath('img/category-accessories.png')}
+              src={normalizePath('img/category-accessories.png')}
               alt="Accessories"
               className={styles.categories__image}
             />

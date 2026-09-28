@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CartItem as CartItemType } from '../../types/CartItem';
 import { useCart } from '../../context/CartContext';
+import { normalizePath } from '../../api/products';
 import styles from './CartItem.module.scss';
 
 interface Props {
@@ -28,7 +29,7 @@ export const CartItem: React.FC<Props> = ({ cartItem }) => {
         className={styles.imageLink}
       >
         <img
-          src={`/${product.image.replace(/^\/+/, '').replace(/^react_phone-catalog\//, '')}`}
+          src={normalizePath(product.image)}
           alt={product.name}
           className={styles.image}
         />

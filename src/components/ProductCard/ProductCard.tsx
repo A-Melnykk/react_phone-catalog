@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/Product';
+import { normalizePath } from '../../api/products';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import styles from './ProductCard.module.scss';
@@ -31,13 +32,6 @@ export const ProductCard: React.FC<Props> = ({
   const showDiscount =
     hasDiscount && product.fullPrice && product.fullPrice > product.price;
 
-  const BASE_URL = import.meta.env.BASE_URL || '/';
-  const normalizedBase = BASE_URL.endsWith('/') ? BASE_URL : `${BASE_URL}/`;
-
-  const cleanImage = product.image.startsWith('/')
-    ? product.image.slice(1)
-    : product.image;
-
   return (
     <div className={styles.card} data-cy="productCard">
       <Link
@@ -45,7 +39,7 @@ export const ProductCard: React.FC<Props> = ({
         className={styles.imageLink}
       >
         <img
-          src={`${normalizedBase}${cleanImage}`}
+          src={normalizePath(product.image)}
           alt={product.name}
           className={styles.image}
         />
